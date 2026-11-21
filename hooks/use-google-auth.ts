@@ -20,15 +20,6 @@ export function useGoogleAuth() {
   // Erro do próprio login com o Google (ex: usuário cancelou, client id errado).
   const [error, setError] = useState<string | null>(null);
 
-  // TEMPORÁRIO: mostra no terminal a redirect URI exata que está sendo usada,
-  // pra cadastrar certinho em Authorized redirect URIs / JavaScript origins
-  // no Google Cloud Console. Pode remover depois de resolver o redirect_uri_mismatch.
-  useEffect(() => {
-    if (request?.redirectUri) {
-      console.log("Google OAuth redirectUri:", request.redirectUri);
-    }
-  }, [request?.redirectUri]);
-
   useEffect(() => {
     if (response?.type === "success") {
       const { id_token } = response.params;

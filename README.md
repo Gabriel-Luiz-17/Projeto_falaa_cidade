@@ -8,25 +8,25 @@ O projeto é desenvolvido com o envolvimento da turma de **Análise e Desenvolvi
 
 ## Funcionalidades
 
-- Login com conta Google (via Firebase Authentication)
+- Login com e-mail e senha e com conta Google (via Firebase Authentication)
 - Navegação sem login, para consultar o mapa e a tela inicial
 - Mapa com os problemas reportados
-- Criação de reportes de problemas na cidade
+- Criação e listagem de reportes de problemas na cidade
 - Perfil do usuário
-- Acompanhamento do status dos reportes (em desenvolvimento)
+- Alteração de status dos reportes por administradores
 
 ## Tecnologias
 
-- [Expo](https://expo.dev) SDK 57 + [Expo Router](https://docs.expo.dev/router/introduction/) (rotas baseadas em arquivos)
+- [Expo](https://expo.dev) SDK 58 + [Expo Router](https://docs.expo.dev/router/introduction/) (rotas baseadas em arquivos)
 - React Native + TypeScript
-- [Firebase](https://firebase.google.com/) (Authentication)
+- [Firebase](https://firebase.google.com/) (Authentication e Cloud Firestore)
 - `expo-auth-session` para o login com Google
 
 ## Pré-requisitos
 
 - [Node.js](https://nodejs.org/) LTS (20 ou superior)
 - npm
-- Um projeto no [Firebase](https://console.firebase.google.com/) com o login do **Google** ativado em *Authentication*
+- Um projeto no [Firebase](https://console.firebase.google.com/) com *Authentication* (Google e/ou e-mail e senha) e **Cloud Firestore** habilitados
 - Um **OAuth Client ID (Web)** criado no [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
 - Para rodar no celular: o app [Expo Go](https://expo.dev/go) ou um emulador Android/iOS
 
@@ -53,14 +53,13 @@ O projeto é desenvolvido com o envolvimento da turma de **Análise e Desenvolvi
    | `EXPO_PUBLIC_FIREBASE_API_KEY` | Firebase → Configurações do projeto → Seus apps |
    | `EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase → Configurações do projeto → Seus apps |
    | `EXPO_PUBLIC_FIREBASE_PROJECT_ID` | Firebase → Configurações do projeto → Seus apps |
-   | `EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET` | Firebase → Configurações do projeto → Seus apps |
    | `EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase → Configurações do projeto → Seus apps |
    | `EXPO_PUBLIC_FIREBASE_APP_ID` | Firebase → Configurações do projeto → Seus apps |
    | `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Google Cloud Console → APIs e serviços → Credenciais |
 
    > O `.env` está no `.gitignore`. Nunca faça commit das suas credenciais.
 
-4. No Google Cloud Console, cadastre a *redirect URI* usada pelo app em **Authorized redirect URIs** e **Authorized JavaScript origins**. A URI exata aparece no terminal ao abrir a tela de login (log `Google OAuth redirectUri:`).
+4. No Google Cloud Console, cadastre a *redirect URI* usada pelo app em **Authorized redirect URIs** e **Authorized JavaScript origins**.
 
 ## Como rodar
 
@@ -85,18 +84,19 @@ Com o servidor rodando, escaneie o QR Code com o **Expo Go** para abrir no celul
 
 ```
 app/                 # Telas e rotas (Expo Router)
-  (tabs)/            # Navegação por abas
-  login.tsx          # Tela de login
-  mapa.tsx           # Mapa com os reportes
-  criarReport.tsx    # Criação de reporte
-  perfil.tsx         # Perfil do usuário
+  index.tsx          # Login (rota inicial)
+  (tabs)/            # Navegação por abas (mapa, perfil etc.)
+  novo-reporte.tsx   # Criação de reporte
+  lista-de-reportes.tsx # Lista de reportes
 components/          # Componentes reutilizáveis
-context/             # Contextos React (ex: autenticação)
-hooks/               # Hooks customizados (ex: login com Google)
+context/             # Contextos React (autenticação e localização)
+hooks/               # Hooks customizados (login, localização, ocorrências, admin)
+services/            # Acesso ao Firestore (reportes, ocorrências, administradores)
 constants/           # Cores, temas e constantes
 assets/              # Imagens e fontes
 docs/                # Documentação e anotações do projeto
 firebase-config.ts   # Inicialização do Firebase
+firestore.rules      # Regras de segurança do Firestore
 ```
 
 ## Fluxo de trabalho (Git)
@@ -107,5 +107,6 @@ firebase-config.ts   # Inicialização do Firebase
 
 ## Documentação adicional
 
-- [Atualização para o Expo SDK 57](docs/atualizacao-expo-sdk-57.md)
+- Versão atual: Expo SDK 58 (conforme `package.json`)
+- [Atualização para o Expo SDK 57 (registro histórico)](docs/atualizacao-expo-sdk-57.md)
 - [Documentação do Expo](https://docs.expo.dev/)

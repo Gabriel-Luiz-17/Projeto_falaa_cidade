@@ -1,49 +1,36 @@
 import { useAuth } from "@/hooks/use-auth";
 import { cores } from "@/styles";
-import { Image } from 'expo-image';
+import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
-// Por enquanto esta tela é uma cópia da tela Mapa (veja os comentários em mapa.tsx).
-// Na próxima etapa ela vai listar as notificações do usuário.
+// Tela placeholder de notificações (mantida simples para não alterar funcionalidades existentes).
 export default function Notificacoes() {
-
   const { user, isLogin: estaLogado } = useAuth();
-
-  const perfil = user ? user : 'sem informação disponivel';
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.status}>
-        {estaLogado ? (
+        {estaLogado && user ? (
           <>
-            <Text style={[styles.statusTexto, { color: cores.verde }]}>
-              Você está logado
-            </Text>
-            <Text style={styles.titulo}>User: {perfil.displayName}</Text>
-            <Text style={styles.titulo}>Email: {perfil.email}</Text>
-            
-            <Image
-              style={styles.image}
-              source={{ uri: perfil.photoURL }}
-             // placeholder={{ blurhash }}
-              contentFit="cover"
-              transition={1000}
-            />
+            <Text style={[styles.statusTexto, { color: cores.verde }]}>Você está logado</Text>
+            <Text style={styles.titulo}>User: {user.displayName}</Text>
+            <Text style={styles.titulo}>Email: {user.email}</Text>
 
-            <Text style={styles.titulo}>Aqui vai o mapa</Text>
-            <Link href="/perfil" asChild>
+            {user.photoURL ? (
+              <Image style={styles.image} source={{ uri: user.photoURL }} contentFit="cover" transition={1000} />
+            ) : null}
+
+            <Text style={styles.titulo}>Aqui vão as notificações</Text>
+            <Link href="/lista-de-reportes" asChild>
               <Pressable>
-                <Text style={styles.link}>Perfil do usuário</Text>
+                <Text style={styles.link}>Ver reportes</Text>
               </Pressable>
             </Link>
           </>
         ) : (
-          <Text style={[styles.statusTexto, { color: cores.alerta }]}>
-            Você não está logado
-          </Text>
+          <Text style={[styles.statusTexto, { color: cores.alerta }]}>Você não está logado</Text>
         )}
       </View>
     </SafeAreaView>
@@ -80,12 +67,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   image: {
-   // flex: 1,
     width: 100,
     height: 100,
     borderRadius: 50,
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: '#0553',
+    backgroundColor: "#0553",
   },
 });

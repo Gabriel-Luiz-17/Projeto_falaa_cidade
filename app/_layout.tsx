@@ -34,6 +34,11 @@ export default function RootLayout() {
             name="novo-reporte"
             options={{ title: "", headerBackTitle: "", headerShadowVisible: false }}
           />
+          {/* Tela com a listagem dos reportes gravados no Firestore */}
+          <Stack.Screen
+            name="lista-de-reportes"
+            options={{ title: "Reportes", headerBackTitle: "" }}
+          />
         </Stack>
       </ThemeProvider>
       </CidadeProvider>

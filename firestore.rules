@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    // Um administrador é identificado pelo documento admins/{uid} com role "admin".
+    function ehAdmin() {
+      return estaAutenticado()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function statusValido(status) {
+      return status in ['aberto', 'em_execucao', 'resolvido'];
+    }
+
+    match /ocorrencias/{idOcorrencia} {
+      allow read: if true;
+      allow create: if estaAutenticado()
+        && request.resource.data.idNotificante == request.auth.uid
+        && request.resource.data.status == 'aberto';
+      // Mesmo o admin só pode alterar o status, e apenas para um valor válido.
+      allow update: if estaAutenticado()
+        && ehAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && statusValido(request.resource.data.status);
+      allow delete: if false;
+    }
+
+    match /admins/{uid} {
+      // Cada usuário lê só o próprio documento de admin; o cadastro é feito no Console.
+      allow get: if estaAutenticado() && request.auth.uid == uid;
+      allow create, update, delete: if false;
+    }
+  }
+}

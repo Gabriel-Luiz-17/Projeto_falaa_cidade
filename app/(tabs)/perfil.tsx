@@ -1,59 +1,47 @@
 import { useAuth, useSair } from "@/hooks/use-auth";
 import { cores } from "@/styles";
-import { Image } from 'expo-image';
+import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
-// Por enquanto esta tela é uma cópia da tela Mapa (veja os comentários em mapa.tsx).
-// Na próxima etapa ela vai mostrar os dados e o botão de sair do usuário.
+// Tela de perfil do usuário, com acesso à lista de reportes e opção de sair.
 export default function Perfil() {
-
   const { user, isLogin: estaLogado } = useAuth();
   // Desloga, limpa o histórico de navegação e vai para o index.
   const handleSair = useSair();
 
-  const perfil = user ? user : 'sem informação disponivel';
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.status}>
-        {estaLogado ? (
+        {estaLogado && user ? (
           <>
-            <Text style={[styles.statusTexto, { color: cores.verde }]}>
-              Você está logado
-            </Text>
-            <Text style={styles.titulo}>User: {perfil.displayName}</Text>
-            <Text style={styles.titulo}>Email: {perfil.email}</Text>
-            
-            <Image
-              style={styles.image}
-              source={{ uri: perfil.photoURL }}
-             // placeholder={{ blurhash }}
-              contentFit="cover"
-              transition={1000}
-            />
+            <Text style={[styles.statusTexto, { color: cores.verde }]}>Você está logado</Text>
+            <Text style={styles.titulo}>User: {user.displayName}</Text>
+            <Text style={styles.titulo}>Email: {user.email}</Text>
 
-            <Text style={styles.titulo}>Aqui vai o mapa</Text>
-            <Link href="/perfil" asChild>
+            {user.photoURL ? (
+              <Image
+                style={styles.image}
+                source={{ uri: user.photoURL }}
+                contentFit="cover"
+                transition={1000}
+              />
+            ) : null}
+
+            {/* Link para a tela de listagem dos reportes gravados no Firestore */}
+            <Link href="/lista-de-reportes" asChild>
               <Pressable>
-                <Text style={styles.link}>Perfil do usuário</Text>
+                <Text style={styles.link}>Ver reportes</Text>
               </Pressable>
             </Link>
 
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.botaoSair}
-              onPress={handleSair}
-            >
+            <TouchableOpacity activeOpacity={0.8} style={styles.botaoSair} onPress={handleSair}>
               <Text style={styles.textoBotaoSair}>Sair</Text>
             </TouchableOpacity>
           </>
         ) : (
-          <Text style={[styles.statusTexto, { color: cores.alerta }]}>
-            Você não está logado
-          </Text>
+          <Text style={[styles.statusTexto, { color: cores.alerta }]}>Você não está logado</Text>
         )}
       </View>
     </SafeAreaView>
@@ -104,12 +92,11 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   image: {
-   // flex: 1,
     width: 100,
     height: 100,
     borderRadius: 50,
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: '#0553',
+    backgroundColor: "#0553",
   },
 });

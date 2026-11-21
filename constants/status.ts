@@ -7,3 +7,5 @@ export const STATUS: Record<StatusOcorrencia, { rotulo: string; cor: string }> =
   em_execucao: { rotulo: "Em execução", cor: cores.alerta },
   resolvido: { rotulo: "Resolvido", cor: cores.verde },
 };
+
+export const OPCOES_STATUS: StatusOcorrencia[] = ["aberto", "em_execucao", "resolvido"];

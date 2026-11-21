@@ -1,29 +1,41 @@
 import { Coordenadas } from "@/context/cidade-context";
+import { bancoDeDados } from "@/firebase-config";
 import { Ocorrencia } from "@/types/ocorrencia";
-
-// Deslocamentos (em graus) em volta do usuário: 0.001 ≈ 110 metros.
-type OcorrenciaMock = Omit<Ocorrencia, "latitude" | "longitude"> & { dLat: number; dLng: number };
-
-const MOCK: OcorrenciaMock[] = [
-  { id: "1", titulo: "Buraco na avenida", status: "aberto", dLat: 0.003, dLng: 0.002 },
-  { id: "2", titulo: "Buraco em frente à escola", status: "aberto", dLat: -0.004, dLng: 0.001 },
-  { id: "3", titulo: "Asfalto afundado", status: "em_execucao", dLat: 0.001, dLng: -0.004 },
-  { id: "4", titulo: "Cratera na esquina", status: "em_execucao", dLat: -0.002, dLng: -0.003 },
-  { id: "5", titulo: "Buraco tapado", status: "resolvido", dLat: 0.005, dLng: -0.001 },
-  { id: "6", titulo: "Rua recapeada", status: "resolvido", dLat: -0.005, dLng: 0.004 },
-];
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 
 /**
- * Busca as ocorrências perto de `centro`.
- * Por enquanto são dados de mentira. Quando a API existir, troque o corpo
- * por um `fetch(`${API_URL}/occurrences`)` e mantenha o mesmo retorno:
- * as telas não precisam mudar.
+ * Busca no Firestore os últimos reportes da coleção "ocorrencias".
+ * O parâmetro _centro é mantido para compatibilidade com o restante do app.
+ * Retorna os dados reais do banco (sem coordenadas fictícias).
  */
-export async function buscarOcorrencias(centro: Coordenadas): Promise<Ocorrencia[]> {
-  await new Promise((resolve) => setTimeout(resolve, 400)); // simula a rede
-  return MOCK.map(({ dLat, dLng, ...resto }) => ({
-    ...resto,
-    latitude: centro.latitude + dLat,
-    longitude: centro.longitude + dLng,
-  }));
+export async function buscarOcorrencias(_centro: Coordenadas): Promise<Ocorrencia[]> {
+  // Monta a consulta na coleção "ocorrencias".
+  // orderBy("criadoEm", "desc") ordena do mais novo para o mais antigo.
+  // limit(50) restringe o resultado aos 50 documentos mais recentes.
+  const consulta = query(
+    collection(bancoDeDados, "ocorrencias"),
+    orderBy("criadoEm", "desc"),
+    limit(50)
+  );
+
+  // getDocs executa a consulta e busca os documentos no Firestore.
+  const resultado = await getDocs(consulta);
+
+  // Converte cada documento do Firestore para o tipo Ocorrencia usado pelo app.
+  // O id real do documento é preservado (doc.id), não usamos ids inventados.
+  return resultado.docs.map((documento) => {
+    const dados = documento.data();
+    return {
+      id: documento.id,
+      titulo: dados.titulo ?? "",
+      descricao: dados.descricao ?? null,
+      status: dados.status ?? "aberto",
+      latitude: Number(dados.latitude),
+      longitude: Number(dados.longitude),
+      idNotificante: dados.idNotificante,
+      tipo: dados.tipo,
+      endereco: dados.endereco ?? null,
+      criadoEm: dados.criadoEm, // Timestamp do Firestore (pode ser usado para exibir data)
+    };
+  });
 }

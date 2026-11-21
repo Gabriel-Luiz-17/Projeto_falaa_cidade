@@ -15,8 +15,6 @@ export default function CriarReport() {
   const { logado } = useLocalSearchParams<{ logado?: string }>();
   const estaLogado = logado === "true";
 
-  console.log("Parâmetro logado recebido:", logado);
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.status}>
