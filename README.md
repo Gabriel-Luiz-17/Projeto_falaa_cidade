@@ -112,3 +112,4 @@ firestore.rules      # Regras de segurança do Firestore
 - [Documentação do Expo](https://docs.expo.dev/)
 # Projeto_falaa_cidade
 # Projeto_falaa_cidade
+# Projeto_falaa_cidade
