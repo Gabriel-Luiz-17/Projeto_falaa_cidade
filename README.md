@@ -111,3 +111,4 @@ firestore.rules      # Regras de segurança do Firestore
 - [Atualização para o Expo SDK 57 (registro histórico)](docs/atualizacao-expo-sdk-57.md)
 - [Documentação do Expo](https://docs.expo.dev/)
 # Projeto_falaa_cidade
+# Projeto_falaa_cidade
