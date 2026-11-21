@@ -114,3 +114,4 @@ firestore.rules      # Regras de segurança do Firestore
 # Projeto_falaa_cidade
 # Projeto_falaa_cidade
 # Projeto_falaa_cidade
+# Projeto_falaa_cidade
